@@ -13,21 +13,28 @@ beforeEach(() => {
 });
 
 describe("todoController.createTodo", () => {
+  beforeEach(() => {
+    req.body = newToDo;
+  });
+
   it("should have a createTodo method", () => {
     expect(typeof todoController.createTodo).toBe("function");
   });
 
   it("should call todoModel.create", () => {
-    req.body = newToDo;
-
     todoController.createTodo(req, res, next);
     expect(todoModel.create).toBeCalledWith(newToDo);
   });
 
   it("should return 201 response code", () => {
-    req.body = newToDo;
     todoController.createTodo(req, res, next);
     expect(res.statusCode).toBe(201);
     expect(res._isEndCalled()).toBe(true);
+  });
+
+  it("should return json body", () => {
+    todoModel.create.mockReturnValue(newToDo);
+    todoController.createTodo(req, res, next);
+    expect(res._getJSONData()).toStrictEqual(newToDo);
   });
 });
